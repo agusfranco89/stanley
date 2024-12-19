@@ -1,0 +1,415 @@
+/*   // SERIALIZAR
+    JSONArray arrCarga = new JSONArray();
+        arrCarga.put(t1.toJson());
+                arrCarga.put(t2.toJson());
+                JsonUtiles.grabarUnJson(arrCarga,"Juguete.json");
+// DESERIALIZAR
+                JSONArray arrlectura = new JSONArray(JsonUtiles.leerUnJson("Juguete.json"));
+                for(int i = 0 ; i<arrlectura.length();i++) {
+        JSONObject toyObj = arrlectura.getJSONObject(i);
+        Toy t = new Toy();
+        t.fromJson(toyObj);
+        System.out.println(t.toString());
+        }
+        MAIN-------------------------------------------------------------
+
+public JSONObject toJson() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("nombreJuguete",this.nombreJuguete);
+        jsonObject.put("cat", this.cat);
+        jsonObject.put("cantidad", this.cantidad);
+        JSONArray piezaArrar = new JSONArray();
+        for(Pieza p : this.listadoDePiezas) {
+        piezaArrar.put(p.toJson());
+        }
+        jsonObject.put("listadoDePiezas", piezaArrar);
+        return jsonObject;
+        }
+
+public void fromJson(JSONObject object) throws JSONException {
+        this.nombreJuguete = object.getString("nombreJuguete");
+        this.cat = Categoria.valueOf(object.getString("cat"));
+        this.cantidad = object.getInt("cantidad");
+        JSONArray piezas = object.getJSONArray("listadoDePiezas");
+
+        for (int i=0 ;  i<piezas.length(); i++){
+        JSONObject pieza = piezas.getJSONObject(i);
+        Pieza p = new Pieza();
+        p.fromJson(pieza);
+        this.listadoDePiezas.add(p);
+        }
+
+        }
+        OBJ 1------------------------------------------------------------
+
+public JSONObject toJson() throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("nombrePieza",this.nombrePieza);
+        o.put("tiempFab",this.tiempFab);
+        return o;
+        }
+public void fromJson (JSONObject object) throws JSONException {
+        this.nombrePieza = object.getString("nombrePieza");
+        this.tiempFab = object.getInt("tiempFab");
+        }
+        OBJ 2-------------------------------------------------------------
+
+public class ClaseGenericaDePersonas<T> {
+    private HashSet<T> registroPersonas;
+
+    public ClaseGenericaDePersonas() {
+        this.registroPersonas = new HashSet<>();
+    }
+
+    public HashSet<T> getRegistroPersonas() {
+        return registroPersonas;
+    }
+
+    public void setRegistroPersonas(HashSet<T> registroPersonas) {
+        this.registroPersonas = registroPersonas;
+    }
+
+    //Agregar un elemento.
+    public boolean agregar (T t){
+        if (!registroPersonas.contains(t)){
+            registroPersonas.add(t);
+            return true;
+        }
+        return false;
+    }
+    //Eliminar un elemento.
+    public boolean eliminar(T t){
+        if (registroPersonas.contains(t)) {
+            registroPersonas.remove(t);
+            System.out.println("Se eliminó correctamente");
+            return true; // Indica que la eliminación fue exitosa
+        } else {
+            System.out.println("No se encontró el elemento");
+            return false; // Indica que no se encontró el elemento
+        }
+    }
+    //Buscar un elemento por una clave recibida por parámetro
+    public boolean buscar(T t) {
+        return registroPersonas.contains(t);      // Retornar false si no se encuentra
+    }
+
+    //Listar todos los elementos
+    public HashSet<T> listar (){
+        return registroPersonas;
+    }
+}
+
+public class ClaseGenericaDePersonas<K, V> {
+    private HashMap<K, V> registroPersonas;
+
+    public ClaseGenericaDePersonas() {
+        this.registroPersonas = new HashMap<>();
+    }
+
+    public HashMap<K, V> getRegistroPersonas() {
+        return registroPersonas;
+    }
+
+    public void setRegistroPersonas(HashMap<K, V> registroPersonas) {
+        this.registroPersonas = registroPersonas;
+    }
+
+    // Agregar un elemento.
+    public boolean agregar(K clave, V valor) {
+        if (!registroPersonas.containsKey(clave)) {
+            registroPersonas.put(clave, valor);
+            return true;
+        }
+        return false; // Retorna false si la clave ya existe.
+    }
+
+    // Eliminar un elemento.
+    public boolean eliminar(K clave) {
+        if (registroPersonas.containsKey(clave)) {
+            registroPersonas.remove(clave);
+            System.out.println("Se eliminó correctamente");
+            return true; // Indica que la eliminación fue exitosa.
+        } else {
+            System.out.println("No se encontró el elemento");
+            return false; // Indica que no se encontró el elemento.
+        }
+    }
+
+    // Buscar un elemento por clave.
+    public V buscar(K clave) {
+        return registroPersonas.getOrDefault(clave, null); // Retorna null si no se encuentra.
+    }
+
+    // Listar todos los elementos.
+    public HashMap<K, V> listar() {
+        return registroPersonas;
+    }
+}
+
+
+CLASEGENERICA------------------------------------------------------------------------------
+
+
+public class GestorRegalos {
+
+    private HashMap<String, Toy> gestorJuguetes;
+
+    public GestorRegalos() {
+        this.gestorJuguetes = new HashMap<>();
+    }
+
+    public HashMap<String, Toy> getGestorJuguetes() {
+        return gestorJuguetes;
+    }
+
+    public void setGestorJuguetes(HashMap<String, Toy> gestorJuguetes) {
+        this.gestorJuguetes = gestorJuguetes;
+    }
+
+    //● Agregar un nuevo juguete al inventario.
+    public Toy agregarJuguete (String clave,Toy j) throws DatosIncompletosException, ElementoRepetidoException {
+        if (j.getNombreJuguete()==null || j.getNombreJuguete().isEmpty()){
+            throw new DatosIncompletosException("No puso el nombre del juguete");
+        }
+        if(gestorJuguetes.containsKey(clave)){
+            throw new ElementoRepetidoException();
+        }
+        return gestorJuguetes.put(clave,j);
+    }
+    //● Buscar información de un juguete por su nombre.
+    public Toy buscarInfoJuguete (String nombre) throws ElementoNoExistenteException {
+        for(Toy t : gestorJuguetes.values()){
+            if(t.getNombreJuguete().equals(nombre)){
+                return t;
+            }
+        }
+        throw new ElementoNoExistenteException("Elemento no esncontrado");
+    }
+
+    //● Actualizar la cantidad disponible de un juguete.
+    public void modificarCantidad (String clave,int i){
+        gestorJuguetes.get(clave).setCantidad(i);
+    }
+
+    //● Listar los juguetes registrados.
+    public void listar1 (){
+        for (Toy t : gestorJuguetes.values()){
+            System.out.println("NOMBRE :"+t.getNombreJuguete()+". CANTIDAD :"+t.getCantidad()+". CATEGORIA :"+
+                    t.getCat()+". PIEZAS: "+t.getListadoDePiezas()+".");
+        }
+    }
+}
+
+    
+    public class GestorRegalos {
+
+        private HashSet<Toy> gestorJuguetes;
+
+        public GestorRegalos() {
+            this.gestorJuguetes = new HashSet<>();
+        }
+
+        public HashSet<Toy> getGestorJuguetes() {
+            return gestorJuguetes;
+        }
+
+        public void setGestorJuguetes(HashSet<Toy> gestorJuguetes) {
+            this.gestorJuguetes = gestorJuguetes;
+        }
+
+        // ● Agregar un nuevo juguete al inventario.
+        public void agregarJuguete(Toy j) throws DatosIncompletosException, ElementoRepetidoException {
+            if (j.getNombreJuguete() == null || j.getNombreJuguete().isEmpty()) {
+                throw new DatosIncompletosException("No puso el nombre del juguete");
+            }
+            if (!gestorJuguetes.add(j)) { // Si no se puede agregar, significa que ya existe
+                throw new ElementoRepetidoException("El juguete ya está registrado");
+            }
+        }
+
+        // ● Buscar información de un juguete por su nombre.
+        public Toy buscarInfoJuguete(String nombre) throws ElementoNoExistenteException {
+            for (Toy t : gestorJuguetes) {
+                if (t.getNombreJuguete().equals(nombre)) {
+                    return t;
+                }
+            }
+            throw new ElementoNoExistenteException("Elemento no encontrado");
+        }
+
+        // ● Actualizar la cantidad disponible de un juguete.
+        public void modificarCantidad(String nombre, int nuevaCantidad) throws ElementoNoExistenteException {
+            Toy toy = buscarInfoJuguete(nombre); // Reutilizamos el método de búsqueda
+            toy.setCantidad(nuevaCantidad);
+        }
+
+        // ● Listar los juguetes registrados.
+        public void listar() {
+            for (Toy t : gestorJuguetes) {
+                System.out.println("NOMBRE: " + t.getNombreJuguete() +
+                        ". CANTIDAD: " + t.getCantidad() +
+                        ". CATEGORÍA: " + t.getCat() +
+                        ". PIEZAS: " + t.getListadoDePiezas() + ".");
+            }
+        }
+    }
+
+    en este caso TOY tendria que tener hashcode y equals
+
+     
+    GESTOR QUE NO UTILIZA LA CLASEGENERICA---------------------------------------------------------------------------
+
+public class RegistroPersonas {
+    private ClaseGenericaDePersonas<Persona> registroDePersonas;
+
+    public RegistroPersonas() {
+        this.registroDePersonas = new ClaseGenericaDePersonas<>();
+    }
+
+    public ClaseGenericaDePersonas<Persona> getRegistroDePersonas() {
+        return registroDePersonas;
+    }
+
+    public void setRegistroDePersonas(ClaseGenericaDePersonas<Persona> registroDePersonas) {
+        this.registroDePersonas = registroDePersonas;
+    }
+
+    public void agregarPersona (Persona p) throws ElementoRepetidoException, DatosIncompletosException {
+        if (registroDePersonas.listar().contains(p)){
+            throw new ElementoRepetidoException("Ya se encuentra la persona");
+        }
+        if (p.getDni()==null || p.getDni().isEmpty()){
+            throw new DatosIncompletosException("Le falta el dni");
+        }
+        registroDePersonas.agregar(p);
+
+    }
+
+    public void buscarPersona(Persona persona) throws ElementoNoExistenteException {
+        if (!registroDePersonas.buscar(persona)) {
+            throw new ElementoNoExistenteException("No se encontro la perosna");
+        }else {
+            System.out.println("Se encontro");
+        }
+    }
+
+    public void eliminarPersona (Persona p) throws ElementoNoExistenteException {
+        if(!registroDePersonas.eliminar(p)) {
+            throw new ElementoNoExistenteException();
+        }
+    }
+
+    public void listar(){
+        for (Persona p : registroDePersonas.listar()){
+            System.out.println(p);
+        };
+    }
+
+    @Override
+    public String toString() {
+        return "RegistroPersonas{" +
+                "registroDePersonas=" + registroDePersonas +
+                '}';
+    }
+}
+
+    CLASE QUE USA LA GENERICIDAD----------------------------------------------------------
+Y SI FUESE HASHMAP
+| 
+V
+public class RegistroPersonas {
+    private ClaseGenericaDePersonas<String, Persona> registroDePersonas;
+
+    public RegistroPersonas() {
+        this.registroDePersonas = new ClaseGenericaDePersonas<>();
+    }
+
+    public ClaseGenericaDePersonas<String, Persona> getRegistroDePersonas() {
+        return registroDePersonas;
+    }
+
+    public void setRegistroDePersonas(ClaseGenericaDePersonas<String, Persona> registroDePersonas) {
+        this.registroDePersonas = registroDePersonas;
+    }
+
+    // Agregar una persona
+    public void agregarPersona(Persona p) throws ElementoRepetidoException, DatosIncompletosException {
+        if (p.getDni() == null || p.getDni().isEmpty()) {
+            throw new DatosIncompletosException("El DNI es obligatorio.");
+        }
+        if (registroDePersonas.getRegistroPersonas().containsKey(p.getDni())) {
+            throw new ElementoRepetidoException("La persona con este DNI ya está registrada.");
+        }
+        registroDePersonas.agregar(p.getDni(), p);
+    }
+
+    // Buscar una persona por DNI
+    public Persona buscarPersona(String dni) throws ElementoNoExistenteException {
+        Persona persona = registroDePersonas.buscar(dni);
+        if (persona == null) {
+            throw new ElementoNoExistenteException("No se encontró a la persona con el DNI especificado.");
+        }
+        return persona;
+    }
+
+    // Eliminar una persona por DNI
+    public void eliminarPersona(String dni) throws ElementoNoExistenteException {
+        if (!registroDePersonas.eliminar(dni)) {
+            throw new ElementoNoExistenteException("No se encontró a la persona para eliminar.");
+        }
+    }
+
+    // Listar todas las personas
+    public void listar() {
+        for (Persona p : registroDePersonas.listar().values()) {
+            System.out.println(p);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "RegistroPersonas{" +
+                "registroDePersonas=" + registroDePersonas +
+                '}';
+    }
+}
+
+*******************************************************************
+Preguntas 
+CLAVE/VALOR(map) si orden no importa hashmap
+si la clave es importante treemap sino linkedHashMap
+
+VALOR-> contiene duplicados (arrayList)
+	si no contiene duplicados (hashSet) 
+	si importa el orden por (LinkedHashSet)
+	importa por algo en particular (TreeSet)
+
+
+/** SET **/
+
+Set<T> mihash = new HashSet<>();
+
+.add  .size  .remove  .contains  .
+
+ Usar Iterator porque no tenemos acceso a un indice (recorre el set) 
+	Iterator <TipoDeHashSet> iterador = mialgo.iterator()
+	while (iterator.hasNext())
+	String elemento = iterator.next();
+	System.out.println("Elemento "+ elemento); 
+
+/** MAP **/
+Clave unica(no puede tener claves duplicadas)
+HashMap SIEMPRE CASE FINAL que no se hereden
+(no tienen orden)
+ 
+Map <TIPOCLAVE,TIPOVALOR> mihMap = new hashmap<>()
+.put .remove .size .constainsKey/value 
+
+--recorrer el HASHMAP
+for (Map.Entry<TIPOCLAVE,TIPOVALOR> entry : mihash.entrySet())
+{
+    sout ("clave" + entry.getKey() + "valor"+ entry.getValue())
+}
+	
+
+*/
